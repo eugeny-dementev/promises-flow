@@ -81,9 +81,8 @@ function prepareOpenAPIPromise () {
     reject = rej;
   });
 
-  return {
-    resolve,
-    reject,
-    then: promise.then.bind(promise),
-  };
+  promise.resolve = resolve;
+  promise.reject = reject;
+
+  return promise;
 }
