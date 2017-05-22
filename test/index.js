@@ -156,6 +156,37 @@ test('should run all promises as soon as possible', (done) => {
     .catch(done);
 });
 
+test('should omit empty and recursive deps', (done) => {
+  const expected = {
+    one: 1,
+  };
+
+  const mapObject = {
+    one: Promise.resolve(1),
+    empty: {
+      deps: [],
+      cb () {
+        return 2;
+      }
+    },
+    recursive: {
+      deps: ['three'],
+      cb () {
+        return 3;
+      }
+    },
+  };
+
+  promisesFlow
+    .run(mapObject)
+    .then((results) => {
+      assert.deepEqual(results, expected);
+
+      done();
+    })
+    .catch(done);
+});
+
 function delay (timeout, value, cb = (value) => value) {
   return new Promise((resolve) => setTimeout(resolve, timeout, value))
     .then(cb);
