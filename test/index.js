@@ -170,11 +170,17 @@ test('should omit empty and recursive deps', (done) => {
       }
     },
     recursive: {
-      deps: ['three'],
+      deps: ['recursive'],
       cb () {
         return 3;
       }
     },
+    notExisted: {
+      deps: ['notExistedDependency'],
+      cb () {
+        return 4;
+      }
+    }
   };
 
   promisesFlow
