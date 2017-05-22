@@ -20,7 +20,9 @@
  *   .catch((error) => `handle error from any of promise`);
  */
 exports.run = function (mapObject) {
-  const keys = Object.keys(mapObject);
+  const keys = Object
+    .keys(mapObject);
+
   const results = keys
     .reduce((result, key) => Object
       .assign(result, {
@@ -61,8 +63,7 @@ exports.run = function (mapObject) {
     });
 
   return Promise
-    .all(Object
-      .keys(results)
+    .all(keys
       .map((key) => results[key]
         .then((result) => ({
           [key]: result,
