@@ -7,7 +7,7 @@ const {
   test,
 } = lab;
 
-const promisesFlow = require('../index');
+const promisesFlow = require('../src/index');
 
 test('should return object with same properties as received', (done) => {
   const mapObject = {
