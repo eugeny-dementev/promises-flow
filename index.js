@@ -42,7 +42,10 @@ exports.run = function (mapObject) {
         return;
       } else {
         const deps = target.deps
-          .filter((dep) => dep != name);
+          .filter((dep) => (
+            dep != name
+            && results[dep]
+          ));
 
         if (deps.length) {
           const depsPromises = deps
