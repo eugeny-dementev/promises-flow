@@ -31,8 +31,7 @@ exports.run = function (mapObject) {
         [key]: prepareOpenAPIPromise(),
       }), {});
 
-  Object
-    .keys(mapObject)
+  keys
     .forEach((name) => {
       const target = mapObject[name];
 
