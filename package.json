@@ -1,6 +1,6 @@
 {
   "name": "promises-flow",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "Promises flow control with dependencies",
   "main": "index.js",
   "scripts": {
