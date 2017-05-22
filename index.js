@@ -44,12 +44,10 @@ exports.run = function (mapObject) {
           .filter((dep) => dep != name);
 
         const depsPromises = deps
-          .map((depName) => Promise
-            .resolve()
-            .then(() => results[depName]
-              .then((result) => ({
-                [depName]: result,
-              }))));
+          .map((dep) => results[dep]
+            .then((result) => ({
+              [dep]: result,
+            })));
 
         const promise = Promise
           .all(depsPromises)
