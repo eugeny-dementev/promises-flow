@@ -39,24 +39,26 @@ exports.run = function (mapObject) {
           .resolve(target);
 
         return;
-      } else if (target.deps.length) {
+      } else {
         const deps = target.deps
           .filter((dep) => dep != name);
 
-        const depsPromises = deps
-          .map((dep) => results[dep]
-            .then((result) => ({
-              [dep]: result,
-            })));
+        if (deps.length) {
+          const depsPromises = deps
+            .map((dep) => results[dep]
+              .then((result) => ({
+                [dep]: result,
+              })));
 
-        const promise = Promise
-          .all(depsPromises)
-          .then((depsResults) => Object
-            .assign(...depsResults))
-          .then(target.cb);
+          const promise = Promise
+            .all(depsPromises)
+            .then((depsResults) => Object
+              .assign(...depsResults))
+            .then(target.cb);
 
-        results[name]
-          .resolve(promise);
+          results[name]
+            .resolve(promise);
+        }
       }
     });
 
