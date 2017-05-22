@@ -23,7 +23,7 @@ exports.run = function (mapObject) {
   const keys = Object
     .keys(mapObject);
 
-  const badResults = [];
+  const bad = [];
 
   const results = keys
     .reduce((result, key) => Object
@@ -60,7 +60,7 @@ exports.run = function (mapObject) {
           results[name]
             .resolve(promise);
         } else {
-          badResults.push(name);
+          bad.push(name);
 
           results[name]
             .resolve(undefined);
@@ -70,7 +70,7 @@ exports.run = function (mapObject) {
 
   return Promise
     .all(keys
-      .filter((key) => !badResults
+      .filter((key) => !bad
         .includes(key))
       .map((key) => results[key]
         .then((result) => ({
