@@ -1,5 +1,5 @@
 /**
- * Revieve the map object with promises or flow structures objects
+ * Receive the map object with promises or flow structures objects
  * @example promisesFlow
  *   .run({
  *     elems: Promise.resolve([1, 2, 3]),

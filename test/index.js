@@ -9,7 +9,7 @@ const {
 
 const promisesFlow = require('../index');
 
-test('should return object with same properties as recieved', (done) => {
+test('should return object with same properties as received', (done) => {
   const mapObject = {
     elems: Promise.resolve([1, 2, 3]),
     delayed: delay(100),
