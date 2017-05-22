@@ -12,5 +12,8 @@
     "dependency"
   ],
   "author": "Eugeny Dementev",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "lab": "^13.1.0"
+  }
 }
