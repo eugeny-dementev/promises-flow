@@ -12,7 +12,7 @@
  *     decremented: {
  *       deps: ['incremented'],
  *       cb: function incrementedElemsHandler ({ incremented }) {
- *         return elems.map(elem => elem - 2);
+ *         return incremented.map(elem => elem - 2);
  *       },
  *     }
  *   })
