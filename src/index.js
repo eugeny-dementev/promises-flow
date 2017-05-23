@@ -1,3 +1,5 @@
+const isPromise = require('is-promise');
+
 /**
  * Receive the map object with promises or flow structures objects
  * @example promisesFlow
@@ -35,9 +37,12 @@ exports.run = function (mapObject) {
     .forEach((name) => {
       const target = mapObject[name];
 
-      if (target instanceof Promise) {
-        results[name]
-          .resolve(target);
+      if (isPromise(target)) {
+        target
+          .then((result) => {
+            results[name]
+              .resolve(result);
+          })
 
         return;
       } else {

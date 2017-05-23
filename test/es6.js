@@ -193,6 +193,36 @@ test('should omit empty and recursive deps', (done) => {
     .catch(done);
 });
 
+test('should work with no native promise implementation', (done) => {
+  const expected = {
+    one: 1,
+    two: 2,
+  };
+
+  const mapObject = {
+    one: {
+      then (cb) {
+        cb(1);
+      },
+    },
+    two: {
+      deps: ['one'],
+      cb ({ one }) {
+        return one + 1;
+      },
+    },
+  };
+
+  promisesFlow
+    .run(mapObject)
+    .then((results) => {
+      assert.deepEqual(results, expected);
+
+      done();
+    })
+    .catch(done);
+});
+
 function delay (timeout, value, cb = (value) => value) {
   return new Promise((resolve) => setTimeout(resolve, timeout, value))
     .then(cb);
