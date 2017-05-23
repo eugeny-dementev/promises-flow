@@ -193,7 +193,7 @@ test('should omit empty and recursive deps', (done) => {
     .catch(done);
 });
 
-test('should work with no native promise implementation', (done) => {
+test('should work with not native promise implementation', (done) => {
   const expected = {
     one: 1,
     two: 2,
