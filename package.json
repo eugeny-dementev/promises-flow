@@ -5,6 +5,7 @@
   "main": "dist/index.js",
   "scripts": {
     "build": "babel src -d dist",
+    "prepublish": "npm run build",
     "codecov": "lab -T node_modules/babel-lab -r lcov | codecov",
     "test": "lab -T node_modules/babel-lab test/*.js -l"
   },
