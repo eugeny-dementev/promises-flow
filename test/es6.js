@@ -200,11 +200,7 @@ test('should work with no native promise implementation', (done) => {
   };
 
   const mapObject = {
-    one: {
-      then (cb) {
-        cb(1);
-      },
-    },
+    one: promiseLikeDelay(100, 1),
     two: {
       deps: ['one'],
       cb ({ one }) {
@@ -222,6 +218,40 @@ test('should work with no native promise implementation', (done) => {
     })
     .catch(done);
 });
+
+test('should allow to use not native promises as `cb` return value', (done) => {
+  const expected = {
+    one: 1,
+    two: 2,
+  };
+
+  const mapObject = {
+    one: Promise.resolve(1),
+    two: {
+      deps: ['one'],
+      cb ({ one }) {
+        return promiseLikeDelay(100, one + 1);
+      },
+    },
+  };
+
+  promisesFlow
+    .run(mapObject)
+    .then((results) => {
+      assert.deepEqual(results, expected);
+
+      done();
+    })
+    .catch(done);
+});
+
+function promiseLikeDelay (timeout, value) {
+  return {
+    then (cb) {
+      setTimeout(cb, timeout, value);
+    },
+  };
+}
 
 function delay (timeout, value, cb = (value) => value) {
   return new Promise((resolve) => setTimeout(resolve, timeout, value))
