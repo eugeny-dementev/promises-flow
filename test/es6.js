@@ -245,6 +245,19 @@ test('should allow to use not native promises as `cb` return value', (done) => {
     .catch(done);
 });
 
+test('should throw error if mapObject properties are not a Promise of flow object', (done) => {
+  const mapObject = {
+    wrongField: 1,
+  }
+
+  assert.throws(() => {
+  promisesFlow
+    .run(mapObject);
+  }, Error);
+
+  done();
+});
+
 function promiseLikeDelay (timeout, value) {
   return {
     then (cb) {

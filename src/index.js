@@ -45,7 +45,7 @@ exports.run = function (mapObject) {
           })
 
         return;
-      } else {
+      } else if (isFlowObject(target)) {
         const deps = target.deps
           .filter((dep) => (
             dep != name
@@ -73,6 +73,13 @@ exports.run = function (mapObject) {
           results[name]
             .resolve(undefined);
         }
+      } else {
+        throw new Error(
+          [
+            `Wrong type of "${name}" property.`,
+            'It must be a Promise or an object: { deps: Array<String>, cb: Function }',
+          ].join(' ')
+        );
       }
     });
 
@@ -101,4 +108,12 @@ function prepareOpenAPIPromise () {
   promise.reject = reject;
 
   return promise;
+}
+
+function isFlowObject (obj) {
+  return (
+    typeof obj === 'object'
+    && Array.isArray(obj.deps)
+    && typeof obj.cb === 'function'
+  );
 }
