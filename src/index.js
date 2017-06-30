@@ -26,8 +26,6 @@ exports.run = function (mapObject) {
   const keys = Object
     .keys(mapObject);
 
-  const bad = [];
-
   const results = keys
     .reduce((result, key) => Object
       .assign(result, {
@@ -51,11 +49,29 @@ exports.run = function (mapObject) {
 
         return;
       } else if (isFlowObject(target)) {
-        const deps = target.deps
+        const deps = target
+          .deps
           .filter((dep) => (
-            dep != name
-            && results[dep]
+            typeof dep === 'string'
           ));
+
+        deps.forEach((dep) => {
+          // Check for recursive dependency
+          if (dep == name) {
+            throw new PromisesFlowError(
+              name,
+              `Recursive dependency: '${dep}'`
+            );
+          }
+          
+          // Check for not existed dependency
+          if (!results[dep]) {
+            throw new PromisesFlowError(
+              name,
+              `Not existed dependency: '${dep}'`
+            );
+          }
+        });
 
         if (deps.length) {
           const depsPromises = deps
@@ -76,10 +92,10 @@ exports.run = function (mapObject) {
           results[name]
             .resolve(promise);
         } else {
-          bad.push(name);
-
-          results[name]
-            .resolve(undefined);
+          throw new PromisesFlowError(
+            name,
+            'Empty deps[]'
+          );
         }
       } else {
         throw new PromisesFlowError(
@@ -91,8 +107,6 @@ exports.run = function (mapObject) {
 
   return Promise
     .all(keys
-      .filter((key) => !bad
-        .includes(key))
       .map((key) => results[key]
         .then((result) => ({
           [key]: result,

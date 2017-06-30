@@ -156,25 +156,47 @@ test('should run all promises as soon as possible', (done) => {
     .catch(done);
 });
 
-test('should omit empty and recursive deps', (done) => {
-  const expected = {
-    one: 1,
-  };
-
+test('should throws on empty deps', (done) => {
   const mapObject = {
     one: Promise.resolve(1),
     empty: {
       deps: [],
       cb () {
-        return 2;
+        return 3;
       }
     },
+  };
+
+  assert.throws(() => {
+    promisesFlow
+      .run(mapObject);
+  }, Error);
+
+  done();
+});
+
+test('should throws on recursive deps', (done) => {
+  const mapObject = {
+    one: Promise.resolve(1),
     recursive: {
       deps: ['recursive'],
       cb () {
         return 3;
       }
     },
+  };
+
+  assert.throws(() => {
+    promisesFlow
+      .run(mapObject);
+  }, Error);
+
+  done();
+});
+
+test('should throws on not existed deps', (done) => {
+  const mapObject = {
+    one: Promise.resolve(1),
     notExisted: {
       deps: ['notExistedDependency'],
       cb () {
@@ -183,14 +205,12 @@ test('should omit empty and recursive deps', (done) => {
     }
   };
 
-  promisesFlow
-    .run(mapObject)
-    .then((results) => {
-      assert.deepEqual(results, expected);
+  assert.throws(() => {
+    promisesFlow
+      .run(mapObject);
+  }, Error);
 
-      done();
-    })
-    .catch(done);
+  done();
 });
 
 test('should work with not native promise implementation', (done) => {
