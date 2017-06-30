@@ -258,12 +258,61 @@ test('should throw error if mapObject properties are not a Promise of flow objec
   done();
 });
 
-function promiseLikeDelay (timeout, value) {
-  return {
-    then (cb) {
-      setTimeout(cb, timeout, value);
+test('should handle error in flow object cb function and transform into PromisesFlowError', (done) => {
+  const mapObject = {
+    one: Promise.resolve(1),
+    error: {
+      deps: ['one'],
+      cb ({ one }) {
+        return one.two.three;
+      },
     },
   };
+
+  const errorMessage = `TypeError: Cannot read property 'three' of undefined`;
+
+  promisesFlow
+    .run(mapObject)
+    .catch((e) => {
+      assert.equal(e.name, 'PromisesFlowError(error)');
+      assert.equal(e.message, errorMessage);
+      done();
+    })
+    .catch(done);
+});
+
+test('should transform error to PromisesFlowError', (done) => {
+  const errorMessage = 'errorMessage';
+  const mapObject = {
+    delayed: delay(100, 'delayed'),
+    errorProperty: Promise.reject(errorMessage),
+    missedError: errorPromise(200, 'missedErrorMessage'),
+  };
+
+  promisesFlow
+    .run(mapObject)
+    .catch((e) => {
+      assert.equal(e.name, 'PromisesFlowError(errorProperty)');
+      assert.equal(e.message, 'errorMessage');
+      done();
+    })
+    .catch(done);
+});
+
+function promiseLikeDelay (timeout, value) {
+  const catchObject = {
+    catch (cb) {},
+  };
+  return Object.assign({
+    then (cb) {
+      setTimeout(cb, timeout, value);
+      return catchObject;
+    },
+  }, catchObject);
+}
+
+function errorPromise (timeout, error) {
+  return new Promise((_, reject) => setTimeout(reject, timeout, error));
 }
 
 function delay (timeout, value, cb = (value) => value) {

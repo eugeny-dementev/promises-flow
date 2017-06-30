@@ -1,4 +1,5 @@
 const isPromise = require('is-promise');
+const PromisesFlowError = require('./promises-flow-error')
 
 /**
  * Receive the map object with promises or flow structures objects
@@ -43,6 +44,10 @@ exports.run = function (mapObject) {
             results[name]
               .resolve(result);
           })
+          .catch((e) => {
+            results[name]
+              .reject(new PromisesFlowError(name, e));
+          });
 
         return;
       } else if (isFlowObject(target)) {
@@ -63,7 +68,10 @@ exports.run = function (mapObject) {
             .all(depsPromises)
             .then((depsResults) => Object
               .assign(...depsResults))
-            .then(target.cb);
+            .then(target.cb)
+            .catch((e) => {
+              throw new PromisesFlowError(name, e);
+            });
 
           results[name]
             .resolve(promise);
@@ -74,11 +82,9 @@ exports.run = function (mapObject) {
             .resolve(undefined);
         }
       } else {
-        throw new Error(
-          [
-            `Wrong type of "${name}" property.`,
-            'It must be a Promise or an object: { deps: Array<String>, cb: Function }',
-          ].join(' ')
+        throw new PromisesFlowError(
+          name,
+          'Property must be a Promise or an object: { deps: Array<String>, cb: Function }',
         );
       }
     });
@@ -112,7 +118,8 @@ function prepareOpenAPIPromise () {
 
 function isFlowObject (obj) {
   return (
-    typeof obj === 'object'
+    obj
+    && typeof obj === 'object'
     && Array.isArray(obj.deps)
     && typeof obj.cb === 'function'
   );
